@@ -2,19 +2,23 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// generator dbml {
+//   provider = "prisma-dbml-generator"
+// }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id    String @id @default(cuid())
-  email String
+  id    String  @id @default(cuid())
+  email String?
   name  String
 
   platform     String
   platformId   String
-  refreshToken String
+  refreshToken String?
 
   pieces Piece[]
   scraps Scrap[]
