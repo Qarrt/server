@@ -16,8 +16,8 @@ model User {
   email String?
   name  String
 
-  platform     String
-  platformId   String
+  provider     String
+  providerId   String
   refreshToken String?
 
   pieces Piece[]
