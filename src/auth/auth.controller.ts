@@ -14,7 +14,14 @@ import { NaverAuthGuard } from './guards/naver.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { Response } from 'express';
 import { KakaoRequest, JwtRequest, NaverRequest } from '../types/request';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -28,6 +35,17 @@ export class AuthController {
     domain: this.configService.get('COOKIE_DOMAIN'),
   };
 
+  @ApiOperation({ summary: '카카오 로그인' })
+  @ApiResponse({
+    status: 301,
+    description: '카카오 로그인 성공 / 홈으로 리다이렉트',
+    headers: {
+      'Set-Cookie': {
+        description:
+          'accessToken, refreshToken, isLoggedIn - isLoggedIn만 httpOnly: false',
+      },
+    },
+  })
   @Get('kakao')
   @UseGuards(KakaoAuthGuard)
   @HttpCode(301)
@@ -56,6 +74,17 @@ export class AuthController {
     return res.redirect(this.configService.get('CLIENT_URL')!);
   }
 
+  @ApiOperation({ summary: 'accessToken 재발급' })
+  @ApiResponse({
+    status: 200,
+    description: 'accessToken 재발급 성공',
+    headers: {
+      'Set-Cookie': {
+        description: 'accessToken',
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'unauthorized - jwt 토큰 인증 실패' })
   @Get('refresh')
   @HttpCode(200)
   async refresh(@Req() req: JwtRequest, @Res() res: Response) {
@@ -75,6 +104,12 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({ summary: '로그아웃' })
+  @ApiResponse({
+    status: 204,
+    description: '로그아웃 성공, 쿠키 삭제',
+  })
+  @ApiUnauthorizedResponse({ description: 'unauthorized - jwt 토큰 인증 실패' })
   @Get('logout')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)

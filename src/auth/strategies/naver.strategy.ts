@@ -21,7 +21,6 @@ export class NaverStrategy extends PassportStrategy(Strategy) {
   ) {
     try {
       const { _json } = profile;
-      console.log(_json);
       const user = {
         naverId: _json.id.toString(),
       };
