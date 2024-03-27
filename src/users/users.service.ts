@@ -27,4 +27,8 @@ export class UsersService {
     const name = this.generateUserName();
     return this.usersRepository.create({ ...provider, name });
   }
+
+  async setCurrentRefreshToken(userId: string, refreshToken: string) {
+    return this.usersRepository.setCurrentRefreshToken(userId, refreshToken);
+  }
 }

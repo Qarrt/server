@@ -16,17 +16,13 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   @HttpCode(301)
   async kakaoLogin(@Req() req: KakaoRequest, @Res() res: Response) {
-    // const { accessToken, refreshToken } = await this.authService.login({
-    //   provider: 'kakao',
-    //   providerId: req.user.kakaoId,
-    // });
-    // res.cookie('accessToken', accessToken, { httpOnly: true });
-    // res.cookie('refreshToken', refreshToken, { httpOnly: true });
-    // res.cookie('isLoggedIn', true, { httpOnly: false });
-    await this.authService.login({
+    const { accessToken, refreshToken } = await this.authService.login({
       provider: 'kakao',
       providerId: req.user.kakaoId,
     });
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    res.cookie('isLoggedIn', true, { httpOnly: false });
     return res.redirect(this.configService.get('CLIENT_URL')!);
   }
 }
