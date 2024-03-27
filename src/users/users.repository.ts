@@ -22,10 +22,21 @@ export class UsersRepository {
     });
   }
 
-  async setCurrentRefreshToken(userId: string, refreshToken: string) {
+  async setRefreshToken(userId: string, refreshToken: string) {
     return this.prisma.user.update({
       where: { id: userId },
       data: { refreshToken },
     });
+  }
+
+  async getRefreshToken(userId: string): Promise<string | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { refreshToken: true },
+    });
+    if (!user) {
+      return null;
+    }
+    return user.refreshToken;
   }
 }

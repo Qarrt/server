@@ -5,3 +5,9 @@ export interface KakaoRequest extends Request {
     kakaoId: string;
   };
 }
+
+export interface JwtRequest extends Request {
+  user: {
+    userId: string;
+  };
+}

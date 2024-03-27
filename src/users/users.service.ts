@@ -28,7 +28,11 @@ export class UsersService {
     return this.usersRepository.create({ ...provider, name });
   }
 
-  async setCurrentRefreshToken(userId: string, refreshToken: string) {
-    return this.usersRepository.setCurrentRefreshToken(userId, refreshToken);
+  async setRefreshToken(userId: string, refreshToken: string) {
+    return this.usersRepository.setRefreshToken(userId, refreshToken);
+  }
+
+  async getRefreshToken(userId: string) {
+    return this.usersRepository.getRefreshToken(userId);
   }
 }

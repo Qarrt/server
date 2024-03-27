@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { ProviderInfo } from 'src/users/users.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -16,9 +16,43 @@ export class AuthService {
 
   async login(info: ProviderInfo) {
     const user = await this.validateUser(info);
-    const accessToken = this.generateAccessToken(user);
+    const accessToken = this.generateAccessToken(user.id);
     const refreshToken = await this.generateRefreshToken(user);
     return { accessToken, refreshToken };
+  }
+
+  async refresh(refreshToken: string): Promise<string> {
+    try {
+      // 1차 검증
+      const decodedRefreshToken = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+      });
+      const userId = decodedRefreshToken.userId;
+
+      // 데이터베이스에서 User 객체 가져오기
+      const savedToken = await this.usersService.getRefreshToken(userId);
+
+      if (!savedToken) {
+        throw new UnauthorizedException('Invalid refresh-token');
+      }
+
+      // 2차 검증
+      const isRefreshTokenMatching = await bcrypt.compare(
+        refreshToken,
+        savedToken,
+      );
+
+      if (!isRefreshTokenMatching) {
+        throw new UnauthorizedException('Invalid refresh-token');
+      }
+
+      // 새로운 accessToken 생성
+      const accessToken = this.generateAccessToken(userId);
+
+      return accessToken;
+    } catch (err) {
+      throw new UnauthorizedException('Invalid refresh-token');
+    }
   }
 
   async validateUser(info: ProviderInfo) {
@@ -29,9 +63,9 @@ export class AuthService {
     return user;
   }
 
-  generateAccessToken(user: User): string {
+  generateAccessToken(userId: string): string {
     const payload = {
-      userId: user.id,
+      userId,
     };
     return this.jwtService.sign(payload);
   }
@@ -49,7 +83,7 @@ export class AuthService {
     const saltOrRounds = 10;
     const currentRefreshToken = await bcrypt.hash(refreshToken, saltOrRounds);
 
-    await this.usersService.setCurrentRefreshToken(
+    await this.usersService.setRefreshToken(
       payload.userId,
       currentRefreshToken,
     );
