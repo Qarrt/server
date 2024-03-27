@@ -55,6 +55,10 @@ export class AuthService {
     }
   }
 
+  async logout(userId: string) {
+    return this.usersService.setRefreshToken(userId, null);
+  }
+
   async validateUser(info: ProviderInfo) {
     const user = await this.usersService.getUserByProvider(info);
     if (!user) {

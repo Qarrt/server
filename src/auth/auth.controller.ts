@@ -10,6 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { KakaoAuthGuard } from './guards/kakao.guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
 import { Response } from 'express';
 import { KakaoRequest, JwtRequest } from '../types/request';
 
@@ -20,6 +21,12 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    domain: this.configService.get('COOKIE_DOMAIN'),
+  };
+
   @Get('kakao')
   @UseGuards(KakaoAuthGuard)
   @HttpCode(301)
@@ -28,9 +35,9 @@ export class AuthController {
       provider: 'kakao',
       providerId: req.user.kakaoId,
     });
-    res.cookie('accessToken', accessToken, { httpOnly: true });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true });
-    res.cookie('isLoggedIn', true, { httpOnly: false });
+    res.cookie('accessToken', accessToken, this.cookieOptions);
+    res.cookie('refreshToken', refreshToken, this.cookieOptions);
+    res.cookie('isLoggedIn', true, { ...this.cookieOptions, httpOnly: false });
     return res.redirect(this.configService.get('CLIENT_URL')!);
   }
 
@@ -46,10 +53,21 @@ export class AuthController {
       });
       return res.send();
     } catch (err) {
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
-      res.clearCookie('isLoggedIn');
+      res.clearCookie('accessToken', this.cookieOptions);
+      res.clearCookie('refreshToken', this.cookieOptions);
+      res.clearCookie('isLoggedIn', { ...this.cookieOptions, httpOnly: false });
       throw new UnauthorizedException();
     }
+  }
+
+  @Get('logout')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
+  async logout(@Req() req: JwtRequest, @Res() res: Response) {
+    this.authService.logout(req.user.userId);
+    res.clearCookie('accessToken', this.cookieOptions);
+    res.clearCookie('refreshToken', this.cookieOptions);
+    res.clearCookie('isLoggedIn', { ...this.cookieOptions, httpOnly: false });
+    return res.send();
   }
 }
