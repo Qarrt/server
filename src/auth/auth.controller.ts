@@ -10,9 +10,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { KakaoAuthGuard } from './guards/kakao.guard';
+import { NaverAuthGuard } from './guards/naver.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { Response } from 'express';
-import { KakaoRequest, JwtRequest } from '../types/request';
+import { KakaoRequest, JwtRequest, NaverRequest } from '../types/request';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +35,20 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.login({
       provider: 'kakao',
       providerId: req.user.kakaoId,
+    });
+    res.cookie('accessToken', accessToken, this.cookieOptions);
+    res.cookie('refreshToken', refreshToken, this.cookieOptions);
+    res.cookie('isLoggedIn', true, { ...this.cookieOptions, httpOnly: false });
+    return res.redirect(this.configService.get('CLIENT_URL')!);
+  }
+
+  @Get('naver')
+  @UseGuards(NaverAuthGuard)
+  @HttpCode(301)
+  async naverLogin(@Req() req: NaverRequest, @Res() res: Response) {
+    const { accessToken, refreshToken } = await this.authService.login({
+      provider: 'naver',
+      providerId: req.user.naverId,
     });
     res.cookie('accessToken', accessToken, this.cookieOptions);
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
