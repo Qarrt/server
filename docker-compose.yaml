@@ -20,8 +20,18 @@ services:
     build: .
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+      CLIENT_URL: ${CLIENT_URL}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
+      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID}
+      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET}
+      BACKEND_URL: ${BACKEND_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN}
     ports:
-      - 3000:3000
+      - 8000:8000
     command: npm run start:compose
     depends_on:
       - postgres
