@@ -1,0 +1,16 @@
+@endpoint = http://localhost:8000
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbHVhdW5ob3AwMDAwYjB4dTNmaGh3Ym5rIiwiaWF0IjoxNzExNjA3MDYyLCJleHAiOjE3MTE2MTA2NjJ9.MBxk4VcHpvWRy9GHSqeK5HOf1mXQHsmSyDEPgaSq72E
+
+### 내 정보 조회
+GET {{endpoint}}/users/my-info
+Cookie: accessToken={{accessToken}}
+
+### 내 정보 수정
+PUT {{endpoint}}/users/my-info
+Cookie: accessToken={{accessToken}}
+Content-Type: application/json
+
+{
+  
+  "name": "tempName"
+}

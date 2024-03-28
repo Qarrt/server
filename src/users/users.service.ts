@@ -1,10 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { ProviderInfo } from './users.dto';
+import {
+  ProviderInfo,
+  type UpdateUserInfoDto,
+  type ReturnUserInfoDto,
+} from './users.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
+
+  async updateUserInfo(
+    userId: string,
+    data: UpdateUserInfoDto,
+  ): Promise<ReturnUserInfoDto> {
+    return this.usersRepository.updateUserInfo(userId, data);
+  }
+
+  async getUserById(id: string): Promise<ReturnUserInfoDto> {
+    const user = await this.usersRepository.getUserById(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
 
   async getUserByProvider(provider: ProviderInfo) {
     return this.usersRepository.getUserByProvider(provider);

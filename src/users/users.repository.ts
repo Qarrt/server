@@ -10,8 +10,11 @@ export class UsersRepository {
     return this.prisma.user.create({ data });
   }
 
-  async getUserById(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { id } });
+  async getUserById(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true, email: true, name: true },
+    });
   }
 
   async getUserByProvider(provider: ProviderInfo): Promise<User | null> {
@@ -38,5 +41,14 @@ export class UsersRepository {
       return null;
     }
     return user.refreshToken;
+  }
+
+  async updateUserInfo(userId: string, data: Prisma.UserUpdateInput) {
+    console.log(data);
+    return this.prisma.user.update({
+      where: { id: userId },
+      data,
+      select: { id: true, email: true, name: true },
+    });
   }
 }
