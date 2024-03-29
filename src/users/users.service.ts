@@ -5,10 +5,17 @@ import {
   type UpdateUserInfoDto,
   type ReturnUserInfoDto,
 } from './users.dto';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private configService: ConfigService,
+    private usersRepository: UsersRepository,
+    private s3Client: S3Client,
+  ) {}
 
   async updateUserInfo(
     userId: string,
@@ -23,6 +30,19 @@ export class UsersService {
       throw new Error('User not found');
     }
     return user;
+  }
+
+  async getUploadUrl(userId: string, type: string): Promise<string> {
+    const extName = type.split('/')[1];
+    const command = new PutObjectCommand({
+      Bucket: this.configService.get('S3_BUCKET_NAME'),
+      Key: `profile/${userId}.${extName}`,
+      ContentType: type,
+    });
+    const signedUrl = await getSignedUrl(this.s3Client, command, {
+      expiresIn: 3600,
+    });
+    return signedUrl;
   }
 
   async getUserByProvider(provider: ProviderInfo) {

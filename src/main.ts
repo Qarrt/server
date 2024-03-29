@@ -23,7 +23,7 @@ async function bootstrap() {
     .setDescription('Qart API description')
     .setVersion('1.0')
     .addTag('Qart')
-    .addCookieAuth('jwt')
+    .addCookieAuth('accessToken')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
