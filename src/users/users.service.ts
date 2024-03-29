@@ -64,7 +64,7 @@ export class UsersService {
     }
     const user = await this.usersRepository.getUserById(userId);
     if (user?.image) {
-      const ext = user.image.split('.').slice(0, -1);
+      const ext = user.image.split('.').pop();
       const command = new DeleteObjectCommand({
         Bucket: this.configService.get('S3_BUCKET_NAME'),
         Key: `profile/${userId}.${ext}`,

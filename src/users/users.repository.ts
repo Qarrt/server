@@ -44,7 +44,6 @@ export class UsersRepository {
   }
 
   async updateUserInfo(userId: string, data: Prisma.UserUpdateInput) {
-    console.log(data);
     return this.prisma.user.update({
       where: { id: userId },
       data,
