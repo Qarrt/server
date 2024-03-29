@@ -13,7 +13,7 @@ export class UsersRepository {
   async getUserById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
-      select: { id: true, email: true, name: true },
+      select: { id: true, email: true, name: true, image: true },
     });
   }
 
@@ -48,7 +48,7 @@ export class UsersRepository {
     return this.prisma.user.update({
       where: { id: userId },
       data,
-      select: { id: true, email: true, name: true },
+      select: { id: true, email: true, name: true, image: true },
     });
   }
 }

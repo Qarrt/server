@@ -7,6 +7,7 @@ import {
   Req,
   Get,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtRequest } from 'src/types/request';
@@ -30,7 +31,6 @@ export class MyInfoController {
   @ApiOperation({ summary: '내 정보 수정' })
   @ApiResponse({
     status: 201,
-    description: '내 정보 수정 성공',
     type: ReturnUserInfoDto,
   })
   @Put()
@@ -46,7 +46,6 @@ export class MyInfoController {
   @ApiOperation({ summary: '내 정보 조회' })
   @ApiResponse({
     status: 200,
-    description: '내 정보 조회 성공',
     type: ReturnUserInfoDto,
   })
   @Get()
@@ -55,6 +54,7 @@ export class MyInfoController {
     return this.usersSerivce.getUserById(req.user.userId);
   }
 
+  @ApiOperation({ summary: '프로필 업로드용 PreSigned URL 받기' })
   @Get('upload-url')
   @UseGuards(AuthGuard('jwt'))
   async getUploadUrl(
@@ -62,5 +62,20 @@ export class MyInfoController {
     @Query('type') type: string,
   ): Promise<string> {
     return this.usersSerivce.getUploadUrl(req.user.userId, type);
+  }
+
+  @ApiOperation({ summary: '프로필 업로드 완료' })
+  @ApiResponse({
+    status: 201,
+    type: ReturnUserInfoDto,
+  })
+  @Patch('upload-complete')
+  @HttpCode(201)
+  @UseGuards(AuthGuard('jwt'))
+  async ProfileUploadComplete(
+    @Req() req: JwtRequest,
+    @Query('type') type: string,
+  ) {
+    return this.usersSerivce.ProfileUploadComplete(req.user.userId, type);
   }
 }

@@ -15,6 +15,7 @@ model User {
   id    String  @id @default(cuid())
   email String?
   name  String
+  image String?
 
   provider     String
   providerId   String

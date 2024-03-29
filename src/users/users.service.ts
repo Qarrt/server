@@ -5,7 +5,15 @@ import {
   type UpdateUserInfoDto,
   type ReturnUserInfoDto,
 } from './users.dto';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
+import {
+  CloudFrontClient,
+  CreateInvalidationCommand,
+} from '@aws-sdk/client-cloudfront';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { ConfigService } from '@nestjs/config';
 
@@ -15,6 +23,7 @@ export class UsersService {
     private configService: ConfigService,
     private usersRepository: UsersRepository,
     private s3Client: S3Client,
+    private cloudFrontClient: CloudFrontClient,
   ) {}
 
   async updateUserInfo(
@@ -40,9 +49,46 @@ export class UsersService {
       ContentType: type,
     });
     const signedUrl = await getSignedUrl(this.s3Client, command, {
-      expiresIn: 3600,
+      expiresIn: 60,
     });
     return signedUrl;
+  }
+
+  async ProfileUploadComplete(userId: string, type: string) {
+    const extName = type.split('/')[1];
+    const result = await this.createInvalidation(
+      `profile/${userId}.${extName}`,
+    );
+    if (!result) {
+      throw new Error('Invalidation failed');
+    }
+    const user = await this.usersRepository.getUserById(userId);
+    if (user?.image) {
+      const ext = user.image.split('.').slice(0, -1);
+      const command = new DeleteObjectCommand({
+        Bucket: this.configService.get('S3_BUCKET_NAME'),
+        Key: `profile/${userId}.${ext}`,
+      });
+      await this.s3Client.send(command);
+    }
+    return this.usersRepository.updateUserInfo(userId, {
+      image: `${this.configService.get('CLOUDFRONT_URL')}/profile/${userId}.${extName}`,
+    });
+  }
+
+  async createInvalidation(key: string): Promise<boolean> {
+    const command = new CreateInvalidationCommand({
+      DistributionId: this.configService.get('CLOUDFRONT_DISTRIBUTION_ID'),
+      InvalidationBatch: {
+        CallerReference: Date.now().toString(),
+        Paths: {
+          Quantity: 1,
+          Items: [`/${key}`],
+        },
+      },
+    });
+    await this.cloudFrontClient.send(command);
+    return true;
   }
 
   async getUserByProvider(provider: ProviderInfo) {

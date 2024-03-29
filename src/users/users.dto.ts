@@ -18,7 +18,7 @@ export class UpdateUserInfoDto {
 }
 
 export class ReturnUserInfoDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'clucnrnwh0000xgk4z8r5aecq' })
   id: string;
 
   @ApiProperty()
@@ -26,4 +26,10 @@ export class ReturnUserInfoDto {
 
   @ApiProperty()
   name: string;
+
+  @ApiProperty({
+    example:
+      'https://image.leemhoon00.com/profile/clucnrnwh0000xgk4z8r5aecq.jpeg',
+  })
+  image: string | null;
 }
