@@ -4,6 +4,7 @@ import {
   ProviderInfo,
   type UpdateUserInfoDto,
   type ReturnUserInfoDto,
+  type UploadImageDto,
 } from './users.dto';
 import {
   S3Client,
@@ -54,25 +55,20 @@ export class UsersService {
     return signedUrl;
   }
 
-  async ProfileUploadComplete(userId: string, type: string) {
-    const extName = type.split('/')[1];
-    const result = await this.createInvalidation(
-      `profile/${userId}.${extName}`,
-    );
-    if (!result) {
-      throw new Error('Invalidation failed');
-    }
-    const user = await this.usersRepository.getUserById(userId);
-    if (user?.image) {
-      const ext = user.image.split('.').pop();
+  async ProfileUploadComplete(userId: string, uploadImageDto: UploadImageDto) {
+    const currentExtName = uploadImageDto.type.split('/')[1];
+
+    if (uploadImageDto.previousImage) {
+      const previousExtName = uploadImageDto.previousImage.split('.').pop();
+      await this.createInvalidation(`profile/${userId}.${previousExtName}`);
       const command = new DeleteObjectCommand({
         Bucket: this.configService.get('S3_BUCKET_NAME'),
-        Key: `profile/${userId}.${ext}`,
+        Key: `profile/${userId}.${previousExtName}`,
       });
       await this.s3Client.send(command);
     }
     return this.usersRepository.updateUserInfo(userId, {
-      image: `${this.configService.get('CLOUDFRONT_URL')}/profile/${userId}.${extName}`,
+      image: `${this.configService.get('CLOUDFRONT_URL')}/profile/${userId}.${currentExtName}`,
     });
   }
 

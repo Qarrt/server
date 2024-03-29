@@ -11,7 +11,11 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtRequest } from 'src/types/request';
-import { UpdateUserInfoDto, ReturnUserInfoDto } from './users.dto';
+import {
+  UpdateUserInfoDto,
+  ReturnUserInfoDto,
+  UploadImageDto,
+} from './users.dto';
 import { UsersService } from './users.service';
 import {
   ApiTags,
@@ -74,8 +78,8 @@ export class MyInfoController {
   @UseGuards(AuthGuard('jwt'))
   async ProfileUploadComplete(
     @Req() req: JwtRequest,
-    @Query('type') type: string,
-  ) {
-    return this.usersSerivce.ProfileUploadComplete(req.user.userId, type);
+    @Body() data: UploadImageDto,
+  ): Promise<ReturnUserInfoDto> {
+    return this.usersSerivce.ProfileUploadComplete(req.user.userId, data);
   }
 }

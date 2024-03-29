@@ -33,3 +33,11 @@ export class ReturnUserInfoDto {
   })
   image: string | null;
 }
+
+export class UploadImageDto {
+  @ApiProperty()
+  type: string;
+
+  @ApiProperty({ required: false })
+  previousImage?: string;
+}
