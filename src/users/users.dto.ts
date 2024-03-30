@@ -38,6 +38,10 @@ export class UploadImageDto {
   @ApiProperty()
   type: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    required: false,
+    example:
+      'https://image.leemhoon00.com/profile/clucnrnwh0000xgk4z8r5aecq.jpeg',
+  })
   previousImage?: string;
 }
