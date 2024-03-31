@@ -9,10 +9,12 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { KakaoAuthGuard } from './guards/kakao.guard';
-import { NaverAuthGuard } from './guards/naver.guard';
-import { GoogleAuthGuard } from './guards/google.guard';
-import { JwtAuthGuard } from './guards/jwt.guard';
+import {
+  KakaoAuthGuard,
+  NaverAuthGuard,
+  GoogleAuthGuard,
+  JwtAuthGuard,
+} from './guards';
 import { Response } from 'express';
 import {
   KakaoRequest,

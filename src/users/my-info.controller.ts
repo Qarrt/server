@@ -9,7 +9,7 @@ import {
   Query,
   Patch,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { JwtAuthGuard } from 'src/auth/guards';
 import { JwtRequest } from 'src/types/request';
 import {
   UpdateUserInfoDto,
