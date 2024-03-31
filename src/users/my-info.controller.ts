@@ -9,7 +9,7 @@ import {
   Query,
   Patch,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/guards';
 import { JwtRequest } from 'src/types/request';
 import {
   UpdateUserInfoDto,
@@ -23,6 +23,7 @@ import {
   ApiBadRequestResponse,
   ApiOperation,
   ApiResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiTags('my-info')
@@ -38,7 +39,7 @@ export class MyInfoController {
     type: ReturnUserInfoDto,
   })
   @Put()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @HttpCode(201)
   async updateUserInfo(
     @Req() req: JwtRequest,
@@ -53,14 +54,15 @@ export class MyInfoController {
     type: ReturnUserInfoDto,
   })
   @Get()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   async getUserInfo(@Req() req: JwtRequest): Promise<ReturnUserInfoDto> {
     return this.usersSerivce.getUserById(req.user.userId);
   }
 
   @ApiOperation({ summary: '프로필 업로드용 PreSigned URL 받기' })
+  @ApiParam({ name: 'type', description: 'image/jpeg, image/png' })
   @Get('upload-url')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   async getUploadUrl(
     @Req() req: JwtRequest,
     @Query('type') type: string,
@@ -75,7 +77,7 @@ export class MyInfoController {
   })
   @Patch('upload-complete')
   @HttpCode(201)
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   async ProfileUploadComplete(
     @Req() req: JwtRequest,
     @Body() data: UploadImageDto,

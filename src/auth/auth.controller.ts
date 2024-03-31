@@ -9,11 +9,19 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { KakaoAuthGuard } from './guards/kakao.guard';
-import { NaverAuthGuard } from './guards/naver.guard';
-import { JwtAuthGuard } from './guards/jwt.guard';
+import {
+  KakaoAuthGuard,
+  NaverAuthGuard,
+  GoogleAuthGuard,
+  JwtAuthGuard,
+} from './guards';
 import { Response } from 'express';
-import { KakaoRequest, JwtRequest, NaverRequest } from '../types/request';
+import {
+  KakaoRequest,
+  JwtRequest,
+  NaverRequest,
+  GoogleRequest,
+} from 'src/types/request';
 import {
   ApiTags,
   ApiOperation,
@@ -67,6 +75,20 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.login({
       provider: 'naver',
       providerId: req.user.naverId,
+    });
+    res.cookie('accessToken', accessToken, this.cookieOptions);
+    res.cookie('refreshToken', refreshToken, this.cookieOptions);
+    res.cookie('isLoggedIn', true, { ...this.cookieOptions, httpOnly: false });
+    return res.redirect(this.configService.get('CLIENT_URL')!);
+  }
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  @HttpCode(301)
+  async googleLogin(@Req() req: GoogleRequest, @Res() res: Response) {
+    const { accessToken, refreshToken } = await this.authService.login({
+      provider: 'google',
+      providerId: req.user.googleId,
     });
     res.cookie('accessToken', accessToken, this.cookieOptions);
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
