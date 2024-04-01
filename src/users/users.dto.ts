@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export type ProviderInfo = {
@@ -36,8 +36,10 @@ export class ReturnUserInfoDto {
 
 export class UploadImageDto {
   @ApiProperty()
+  @IsString()
   type: string;
 
+  @IsOptional()
   @ApiProperty({
     required: false,
     example:

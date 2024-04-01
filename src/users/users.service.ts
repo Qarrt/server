@@ -6,25 +6,16 @@ import {
   type ReturnUserInfoDto,
   type UploadImageDto,
 } from './users.dto';
-import {
-  S3Client,
-  PutObjectCommand,
-  DeleteObjectCommand,
-} from '@aws-sdk/client-s3';
-import {
-  CloudFrontClient,
-  CreateInvalidationCommand,
-} from '@aws-sdk/client-cloudfront';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
 import { ConfigService } from '@nestjs/config';
+import { AwsService } from 'src/utils/aws/aws.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private configService: ConfigService,
     private usersRepository: UsersRepository,
-    private s3Client: S3Client,
-    private cloudFrontClient: CloudFrontClient,
+    private awsService: AwsService,
   ) {}
 
   async updateUserInfo(
@@ -44,14 +35,8 @@ export class UsersService {
 
   async getUploadUrl(userId: string, type: string): Promise<string> {
     const extName = type.split('/')[1];
-    const command = new PutObjectCommand({
-      Bucket: this.configService.get('S3_BUCKET_NAME'),
-      Key: `profile/${userId}.${extName}`,
-      ContentType: type,
-    });
-    const signedUrl = await getSignedUrl(this.s3Client, command, {
-      expiresIn: 60,
-    });
+    const key = `profile/${userId}.${extName}`;
+    const signedUrl = await this.awsService.getUploadUrl(key, type);
     return signedUrl;
   }
 
@@ -60,33 +45,18 @@ export class UsersService {
 
     if (uploadImageDto.previousImage) {
       const previousExtName = uploadImageDto.previousImage.split('.').pop();
-      await this.createInvalidation(`profile/${userId}.${previousExtName}`);
+      await this.awsService.createInvalidation(
+        `profile/${userId}.${previousExtName}`,
+      );
       if (currentExtName !== previousExtName) {
-        const command = new DeleteObjectCommand({
-          Bucket: this.configService.get('S3_BUCKET_NAME'),
-          Key: `profile/${userId}.${previousExtName}`,
-        });
-        await this.s3Client.send(command);
+        await this.awsService.s3DeleteObject(
+          `profile/${userId}.${previousExtName}`,
+        );
       }
     }
     return this.usersRepository.updateUserInfo(userId, {
       image: `${this.configService.get('CLOUDFRONT_URL')}/profile/${userId}.${currentExtName}`,
     });
-  }
-
-  async createInvalidation(key: string): Promise<boolean> {
-    const command = new CreateInvalidationCommand({
-      DistributionId: this.configService.get('CLOUDFRONT_DISTRIBUTION_ID'),
-      InvalidationBatch: {
-        CallerReference: Date.now().toString(),
-        Paths: {
-          Quantity: 1,
-          Items: [`/${key}`],
-        },
-      },
-    });
-    await this.cloudFrontClient.send(command);
-    return true;
   }
 
   async getUserByProvider(provider: ProviderInfo) {
