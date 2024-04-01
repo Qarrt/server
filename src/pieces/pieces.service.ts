@@ -16,11 +16,11 @@ export class PiecesService {
     userId: string,
     createTempPieceDto: CreateTempPieceDto,
   ) {
-    const { imageFile, ...data } = { ...createTempPieceDto };
+    const { file, ...data } = { ...createTempPieceDto };
     const tempPiece = await this.piecesRepository.createTempPiece(userId, data);
-    if (imageFile) {
-      const key = `temp-pieces/${tempPiece.id}.${imageFile.mimetype.split('/')[1]}`;
-      await this.awsService.s3UploadObject(key, imageFile);
+    if (file) {
+      const key = `temp-pieces/${tempPiece.id}.${file.mimetype.split('/')[1]}`;
+      await this.awsService.s3UploadObject(key, file);
       return this.piecesRepository.updateTempPiece(tempPiece.id, {
         image: `${this.configService.get('CLOUDFRONT_URL')}/${key}`,
       });

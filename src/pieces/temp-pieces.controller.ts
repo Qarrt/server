@@ -40,15 +40,15 @@ export class TempPiecesController {
   })
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('imageFile'))
+  @UseInterceptors(FileInterceptor('file'))
   async createTempPiece(
     @Body() createTempPieceDto: CreateTempPieceDto,
-    @UploadedFile() imageFile: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
     @Req() req: JwtRequest,
   ) {
     return this.piecesService.createTempPiece(req.user.userId, {
       ...createTempPieceDto,
-      imageFile,
+      file,
     });
   }
 }

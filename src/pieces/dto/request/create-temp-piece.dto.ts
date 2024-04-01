@@ -54,5 +54,5 @@ export class CreateTempPieceDto {
   description: string;
 
   @ApiProperty({ type: 'file', required: false })
-  imageFile?: Express.Multer.File;
+  file?: Express.Multer.File;
 }
