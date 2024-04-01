@@ -12,7 +12,7 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(cuid())
+  id    String  @id @default(uuid())
   email String?
   name  String
   image String?
@@ -27,7 +27,7 @@ model User {
 }
 
 model Piece {
-  id            String  @id @default(cuid())
+  id            String  @id @default(uuid())
   title         String
   material      String
   year          Int
@@ -47,7 +47,7 @@ model Piece {
 }
 
 model TempPiece {
-  id            String  @id @default(cuid())
+  id            String  @id @default(uuid())
   title         String
   material      String?
   year          Int?

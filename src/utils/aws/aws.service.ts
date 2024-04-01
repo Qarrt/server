@@ -40,6 +40,20 @@ export class AwsService {
     return true;
   }
 
+  async s3UploadObject(
+    key: string,
+    file: Express.Multer.File,
+  ): Promise<boolean> {
+    const command = new PutObjectCommand({
+      Bucket: this.configService.get('S3_BUCKET_NAME'),
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    });
+    await this.s3Client.send(command);
+    return true;
+  }
+
   async createInvalidation(key: string): Promise<boolean> {
     const command = new CreateInvalidationCommand({
       DistributionId: this.configService.get('CLOUDFRONT_DISTRIBUTION_ID'),
