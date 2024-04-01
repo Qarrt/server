@@ -7,5 +7,6 @@ Cookie: accessToken={{accessToken}}
 Content-Type: application/json
 
 {
-  "title": "임시 작품"
+  "title": "임시 작품",
+  "exhibited": true
 }

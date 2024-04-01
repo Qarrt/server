@@ -4,7 +4,6 @@ import {
   MaxLength,
   IsNumber,
   IsBoolean,
-  IsString,
 } from 'class-validator';
 
 import { Transform } from 'class-transformer';
