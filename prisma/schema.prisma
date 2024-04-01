@@ -26,9 +26,17 @@ model User {
 }
 
 model Piece {
-  id          String @id @default(cuid())
-  title       String
-  description String
+  id            String  @id @default(cuid())
+  title         String
+  material      String
+  createdYear   Int
+  width         Float
+  height        Float
+  exhibited     Boolean
+  authorComment String
+  description   String
+  image         String
+  published     Boolean
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
