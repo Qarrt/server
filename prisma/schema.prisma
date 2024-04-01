@@ -30,7 +30,7 @@ model Piece {
   id            String  @id @default(cuid())
   title         String
   material      String
-  createdYear   Int
+  year          Int
   width         Float
   height        Float
   exhibited     Boolean
@@ -47,13 +47,13 @@ model Piece {
 }
 
 model TempPiece {
-  id            String   @id @default(cuid())
+  id            String  @id @default(cuid())
   title         String
   material      String?
-  createdYear   Int?
+  year          Int?
   width         Float?
   height        Float?
-  exhibited     Boolean?
+  exhibited     Boolean
   authorComment String?
   description   String?
   image         String?
