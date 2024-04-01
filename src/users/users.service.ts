@@ -61,11 +61,13 @@ export class UsersService {
     if (uploadImageDto.previousImage) {
       const previousExtName = uploadImageDto.previousImage.split('.').pop();
       await this.createInvalidation(`profile/${userId}.${previousExtName}`);
-      const command = new DeleteObjectCommand({
-        Bucket: this.configService.get('S3_BUCKET_NAME'),
-        Key: `profile/${userId}.${previousExtName}`,
-      });
-      await this.s3Client.send(command);
+      if (currentExtName !== previousExtName) {
+        const command = new DeleteObjectCommand({
+          Bucket: this.configService.get('S3_BUCKET_NAME'),
+          Key: `profile/${userId}.${previousExtName}`,
+        });
+        await this.s3Client.send(command);
+      }
     }
     return this.usersRepository.updateUserInfo(userId, {
       image: `${this.configService.get('CLOUDFRONT_URL')}/profile/${userId}.${currentExtName}`,
