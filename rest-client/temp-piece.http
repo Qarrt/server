@@ -38,3 +38,7 @@ Content-Type: image/png
 
 < ./images/chicken.png
 --data--
+
+### 임시 작품 삭제
+DELETE {{endpoint}}/temp-pieces/e3ad8541-ea6b-499f-afa2-bfc0351a6254
+Cookie: accessToken={{accessToken}}

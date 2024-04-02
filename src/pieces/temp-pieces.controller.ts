@@ -9,6 +9,7 @@ import {
   Get,
   Param,
   Put,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards';
@@ -102,5 +103,12 @@ export class TempPiecesController {
       ...updateTempPieceDto,
       file,
     });
+  }
+
+  @ApiOperation({ summary: '임시 작품 삭제' })
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteTempPiece(@Param('id') id: string) {
+    return this.piecesService.deleteTempPiece(id);
   }
 }

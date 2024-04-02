@@ -45,4 +45,12 @@ export class PiecesRepository {
       },
     });
   }
+
+  async deleteTempPiece(id: string): Promise<TempPiece> {
+    return this.prisma.tempPiece.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }

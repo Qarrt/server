@@ -50,4 +50,17 @@ export class PiecesService {
 
     return this.piecesRepository.updateTempPiece(id, data);
   }
+
+  async deleteTempPiece(id: string) {
+    const tempPiece = await this.piecesRepository.getTempPiece(id);
+    if (!tempPiece) {
+      return;
+    }
+    if (tempPiece.image) {
+      const ext = tempPiece.image.split('.').pop();
+      const key = `temp-pieces/${id}.${ext}`;
+      this.awsService.s3DeleteObject(key);
+    }
+    return this.piecesRepository.deleteTempPiece(id);
+  }
 }
