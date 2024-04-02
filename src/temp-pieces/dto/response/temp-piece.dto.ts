@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class PieceDto {
+export class TempPieceDto {
   @ApiProperty({ example: '2c120a38-73ec-4b34-be78-a9c5404ffe4c' })
   id: string;
 

@@ -15,8 +15,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards';
 import { JwtRequest } from 'src/types/request';
 import { CreateTempPieceDto, UpdateTempPieceDto } from './dto/request';
-import { PieceDto } from './dto/response/piece.dto';
-import { PiecesService } from './pieces.service';
+import { TempPieceDto } from './dto/response/temp-piece.dto';
+import { TempPiecesService } from './temp-pieces.service';
 
 import {
   ApiTags,
@@ -29,7 +29,7 @@ import {
 @ApiTags('temp-pieces')
 @Controller('temp-pieces')
 export class TempPiecesController {
-  constructor(private readonly piecesService: PiecesService) {}
+  constructor(private readonly tempPiecesService: TempPiecesService) {}
 
   @ApiOperation({ summary: '작품 임시 저장' })
   @ApiConsumes('multipart/form-data')
@@ -40,7 +40,7 @@ export class TempPiecesController {
   @ApiResponse({
     status: 201,
     description: '임시 작품 저장 성공',
-    type: PieceDto,
+    type: TempPieceDto,
   })
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -50,7 +50,7 @@ export class TempPiecesController {
     @UploadedFile() file: Express.Multer.File,
     @Req() req: JwtRequest,
   ) {
-    return this.piecesService.createTempPiece(req.user.userId, {
+    return this.tempPiecesService.createTempPiece(req.user.userId, {
       ...createTempPieceDto,
       file,
     });
@@ -60,24 +60,24 @@ export class TempPiecesController {
   @ApiResponse({
     status: 200,
     description: '임시 작품 조회 성공',
-    type: PieceDto,
+    type: TempPieceDto,
   })
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async getTempPiece(@Param('id') id: string) {
-    return this.piecesService.getTempPiece(id);
+    return this.tempPiecesService.getTempPiece(id);
   }
 
   @ApiOperation({ summary: '임시 작품 리스트 조회' })
   @ApiResponse({
     status: 200,
     description: '임시 작품 리스트 조회 성공',
-    type: [PieceDto],
+    type: [TempPieceDto],
   })
   @Get()
   @UseGuards(JwtAuthGuard)
   async getTempPieces(@Req() req: JwtRequest) {
-    return this.piecesService.getTempPieces(req.user.userId);
+    return this.tempPiecesService.getTempPieces(req.user.userId);
   }
 
   @ApiOperation({ summary: '임시 작품 수정' })
@@ -89,7 +89,7 @@ export class TempPiecesController {
   @ApiResponse({
     status: 201,
     description: '임시 작품 수정 성공',
-    type: PieceDto,
+    type: TempPieceDto,
   })
   @Put(':id')
   @UseGuards(JwtAuthGuard)
@@ -99,7 +99,7 @@ export class TempPiecesController {
     @Body() updateTempPieceDto: UpdateTempPieceDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.piecesService.updateTempPiece(id, {
+    return this.tempPiecesService.updateTempPiece(id, {
       ...updateTempPieceDto,
       file,
     });
@@ -109,6 +109,6 @@ export class TempPiecesController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async deleteTempPiece(@Param('id') id: string) {
-    return this.piecesService.deleteTempPiece(id);
+    return this.tempPiecesService.deleteTempPiece(id);
   }
 }
