@@ -1,0 +1,13 @@
+@endpoint = http://localhost:8000
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhNmM2ZWYyYy04ZjIwLTQxMTMtODU1NS02NzQyMzEyZDU0NTkiLCJpYXQiOjE3MTIwMzg1MzksImV4cCI6MTcxMjEyNDkzOX0.su2NvLjKPkurrzvWZdSiMEQA5N0ZuGJuVfMwCUoeXew
+
+### 작품 저장
+POST {{endpoint}}/pieces
+Cookie: accessToken={{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "임시 작품",
+  "material": "abc",
+  "year": null
+}
