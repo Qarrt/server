@@ -29,4 +29,28 @@ export class PiecesRepository {
       data,
     });
   }
+
+  async getTempPiece(id: string): Promise<TempPiece | null> {
+    return this.prisma.tempPiece.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async getTempPieces(userId: string): Promise<TempPiece[]> {
+    return this.prisma.tempPiece.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  async deleteTempPiece(id: string): Promise<TempPiece> {
+    return this.prisma.tempPiece.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }
