@@ -8,5 +8,6 @@ import { AwsModule } from 'src/utils/aws/aws.module';
   imports: [AwsModule],
   controllers: [TempPiecesController],
   providers: [TempPiecesService, TempPiecesRepository],
+  exports: [TempPiecesService],
 })
 export class TempPiecesModule {}

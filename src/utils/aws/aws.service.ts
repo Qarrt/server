@@ -4,6 +4,7 @@ import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
+  CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import {
   CloudFrontClient,
@@ -66,6 +67,19 @@ export class AwsService {
       },
     });
     await this.cloudFrontClient.send(command);
+    return true;
+  }
+
+  async copyObject(
+    sourceKey: string,
+    destinationKey: string,
+  ): Promise<boolean> {
+    const command = new CopyObjectCommand({
+      Bucket: this.configService.get('S3_BUCKET_NAME'),
+      CopySource: `${this.configService.get('S3_BUCKET_NAME')}/${sourceKey}`,
+      Key: destinationKey,
+    });
+    await this.s3Client.send(command);
     return true;
   }
 }
