@@ -27,4 +27,8 @@ export class PiecesService {
     }
     return tempPiece;
   }
+
+  async getTempPiece(id: string) {
+    return this.piecesRepository.getTempPiece(id);
+  }
 }

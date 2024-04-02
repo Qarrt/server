@@ -29,4 +29,12 @@ export class PiecesRepository {
       data,
     });
   }
+
+  async getTempPiece(id: string): Promise<TempPiece | null> {
+    return this.prisma.tempPiece.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 }

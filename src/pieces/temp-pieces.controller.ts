@@ -6,6 +6,8 @@ import {
   Req,
   UseInterceptors,
   UploadedFile,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards';
@@ -50,5 +52,17 @@ export class TempPiecesController {
       ...createTempPieceDto,
       file,
     });
+  }
+
+  @ApiOperation({ summary: '임시 작품 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '임시 작품 조회 성공',
+    type: PieceDto,
+  })
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async getTempPiece(@Param('id') id: string) {
+    return this.piecesService.getTempPiece(id);
   }
 }
