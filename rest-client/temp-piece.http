@@ -18,3 +18,23 @@ Cookie: accessToken={{accessToken}}
 ### 임시 작품 리스트 조회
 GET {{endpoint}}/temp-pieces
 Cookie: accessToken={{accessToken}}
+
+### 임시 작품 수정
+PUT {{endpoint}}/temp-pieces/e3ad8541-ea6b-499f-afa2-bfc0351a6254
+Cookie: accessToken={{accessToken}}
+Content-Type: multipart/form-data; boundary=data
+
+--data
+Content-Disposition: form-data; name="title"
+
+abc
+--data
+Content-Disposition: form-data; name="exhibited"
+
+false
+--data
+Content-Disposition: form-data; name="file"; filename="image.png"
+Content-Type: image/png
+
+< ./images/chicken.png
+--data--

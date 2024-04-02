@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { Transform } from 'class-transformer';
 
-export class CreateTempPieceDto {
+export class UpdateTempPieceDto {
   @ApiProperty()
   @MinLength(1)
   @MaxLength(30)
@@ -53,6 +53,11 @@ export class CreateTempPieceDto {
   @IsOptional()
   description: string;
 
-  @ApiProperty({ type: 'file', required: false })
-  file?: Express.Multer.File;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  file: Express.Multer.File;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  image: string;
 }

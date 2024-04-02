@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PiecesRepository } from './pieces.repository';
-import { type CreateTempPieceDto } from './dto/request/create-temp-piece.dto';
+import type { CreateTempPieceDto, UpdateTempPieceDto } from './dto/request';
 import { AwsService } from 'src/utils/aws/aws.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -34,5 +34,20 @@ export class PiecesService {
 
   async getTempPieces(userId: string) {
     return this.piecesRepository.getTempPieces(userId);
+  }
+
+  async updateTempPiece(id: string, updateTempPieceDto: UpdateTempPieceDto) {
+    const { file, ...data } = { ...updateTempPieceDto };
+
+    if (file) {
+      const key = `temp-pieces/${id}.${file.mimetype.split('/')[1]}`;
+      this.awsService.s3UploadObject(key, file);
+      data.image = `${this.configService.get('CLOUDFRONT_URL')}/${key}`;
+      if (data.image) {
+        await this.awsService.createInvalidation(key);
+      }
+    }
+
+    return this.piecesRepository.updateTempPiece(id, data);
   }
 }
