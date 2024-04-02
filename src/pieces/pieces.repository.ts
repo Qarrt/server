@@ -37,4 +37,12 @@ export class PiecesRepository {
       },
     });
   }
+
+  async getTempPieces(userId: string): Promise<TempPiece[]> {
+    return this.prisma.tempPiece.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
 }

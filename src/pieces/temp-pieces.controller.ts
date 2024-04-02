@@ -65,4 +65,16 @@ export class TempPiecesController {
   async getTempPiece(@Param('id') id: string) {
     return this.piecesService.getTempPiece(id);
   }
+
+  @ApiOperation({ summary: '임시 작품 리스트 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '임시 작품 리스트 조회 성공',
+    type: [PieceDto],
+  })
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getTempPieces(@Req() req: JwtRequest) {
+    return this.piecesService.getTempPieces(req.user.userId);
+  }
 }
