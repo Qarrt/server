@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PiecesRepository } from './pieces.repository';
+import { TempPiecesRepository } from './temp-pieces.repository';
 import type { CreateTempPieceDto, UpdateTempPieceDto } from './dto/request';
 import { AwsService } from 'src/utils/aws/aws.service';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class PiecesService {
+export class TempPiecesService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly piecesRepository: PiecesRepository,
+    private readonly tempPiecesRepository: TempPiecesRepository,
     private readonly awsService: AwsService,
   ) {}
 
@@ -17,11 +17,14 @@ export class PiecesService {
     createTempPieceDto: CreateTempPieceDto,
   ) {
     const { file, ...data } = { ...createTempPieceDto };
-    const tempPiece = await this.piecesRepository.createTempPiece(userId, data);
+    const tempPiece = await this.tempPiecesRepository.createTempPiece(
+      userId,
+      data,
+    );
     if (file) {
       const key = `temp-pieces/${tempPiece.id}.${file.mimetype.split('/')[1]}`;
       await this.awsService.s3UploadObject(key, file);
-      return this.piecesRepository.updateTempPiece(tempPiece.id, {
+      return this.tempPiecesRepository.updateTempPiece(tempPiece.id, {
         image: `${this.configService.get('CLOUDFRONT_URL')}/${key}`,
       });
     }
@@ -29,11 +32,11 @@ export class PiecesService {
   }
 
   async getTempPiece(id: string) {
-    return this.piecesRepository.getTempPiece(id);
+    return this.tempPiecesRepository.getTempPiece(id);
   }
 
   async getTempPieces(userId: string) {
-    return this.piecesRepository.getTempPieces(userId);
+    return this.tempPiecesRepository.getTempPieces(userId);
   }
 
   async updateTempPiece(id: string, updateTempPieceDto: UpdateTempPieceDto) {
@@ -48,11 +51,11 @@ export class PiecesService {
       }
     }
 
-    return this.piecesRepository.updateTempPiece(id, data);
+    return this.tempPiecesRepository.updateTempPiece(id, data);
   }
 
   async deleteTempPiece(id: string) {
-    const tempPiece = await this.piecesRepository.getTempPiece(id);
+    const tempPiece = await this.tempPiecesRepository.getTempPiece(id);
     if (!tempPiece) {
       return;
     }
@@ -61,6 +64,6 @@ export class PiecesService {
       const key = `temp-pieces/${id}.${ext}`;
       this.awsService.s3DeleteObject(key);
     }
-    return this.piecesRepository.deleteTempPiece(id);
+    return this.tempPiecesRepository.deleteTempPiece(id);
   }
 }
