@@ -11,11 +11,8 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards';
 import { JwtRequest } from 'src/types/request';
-import {
-  UpdateUserInfoDto,
-  ReturnUserInfoDto,
-  UploadImageDto,
-} from './users.dto';
+import { UpdateUserDto, UploadImageDto } from './dto/request';
+import { UserDto } from './dto/response';
 import { UsersService } from './users.service';
 import {
   ApiTags,
@@ -36,26 +33,26 @@ export class MyInfoController {
   @ApiOperation({ summary: '내 정보 수정' })
   @ApiResponse({
     status: 201,
-    type: ReturnUserInfoDto,
+    type: UserDto,
   })
   @Put()
   @UseGuards(JwtAuthGuard)
   @HttpCode(201)
   async updateUserInfo(
     @Req() req: JwtRequest,
-    @Body() data: UpdateUserInfoDto,
-  ): Promise<ReturnUserInfoDto> {
+    @Body() data: UpdateUserDto,
+  ): Promise<UserDto> {
     return this.usersSerivce.updateUserInfo(req.user.userId, data);
   }
 
   @ApiOperation({ summary: '내 정보 조회' })
   @ApiResponse({
     status: 200,
-    type: ReturnUserInfoDto,
+    type: UserDto,
   })
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getUserInfo(@Req() req: JwtRequest): Promise<ReturnUserInfoDto> {
+  async getUserInfo(@Req() req: JwtRequest): Promise<UserDto> {
     return this.usersSerivce.getUserById(req.user.userId);
   }
 
@@ -73,7 +70,7 @@ export class MyInfoController {
   @ApiOperation({ summary: '프로필 업로드 완료' })
   @ApiResponse({
     status: 201,
-    type: ReturnUserInfoDto,
+    type: UserDto,
   })
   @Patch('upload-complete')
   @HttpCode(201)
@@ -81,7 +78,7 @@ export class MyInfoController {
   async ProfileUploadComplete(
     @Req() req: JwtRequest,
     @Body() data: UploadImageDto,
-  ): Promise<ReturnUserInfoDto> {
+  ): Promise<UserDto> {
     return this.usersSerivce.ProfileUploadComplete(req.user.userId, data);
   }
 }

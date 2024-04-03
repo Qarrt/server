@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import {
-  ProviderInfo,
-  type UpdateUserInfoDto,
-  type ReturnUserInfoDto,
-  type UploadImageDto,
-} from './users.dto';
+import { ProviderInfo } from './type';
+import type { UpdateUserDto, UploadImageDto } from './dto/request';
+import type { UserDto } from './dto/response';
 
 import { ConfigService } from '@nestjs/config';
 import { AwsService } from 'src/utils/aws/aws.service';
@@ -18,14 +15,11 @@ export class UsersService {
     private awsService: AwsService,
   ) {}
 
-  async updateUserInfo(
-    userId: string,
-    data: UpdateUserInfoDto,
-  ): Promise<ReturnUserInfoDto> {
+  async updateUserInfo(userId: string, data: UpdateUserDto): Promise<UserDto> {
     return this.usersRepository.updateUserInfo(userId, data);
   }
 
-  async getUserById(id: string): Promise<ReturnUserInfoDto> {
+  async getUserById(id: string): Promise<UserDto> {
     const user = await this.usersRepository.getUserById(id);
     if (!user) {
       throw new Error('User not found');
