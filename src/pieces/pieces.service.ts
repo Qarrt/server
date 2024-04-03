@@ -15,7 +15,7 @@ export class PiecesService {
     private configService: ConfigService,
   ) {}
 
-  async createPiece(userId: string, createPieceDto: any) {
+  async createPiece(userId: string, createPieceDto: CreatePieceDto) {
     const { file, tempPieceId, ...data } = createPieceDto;
     const id = uuidv4();
     let ext;
@@ -48,5 +48,15 @@ export class PiecesService {
       image: `${this.configService.get('CLOUDFRONT_URL')}/${key}`,
       id,
     });
+  }
+
+  async getPiece(id: string) {
+    const piece = await this.piecesRepository.getPiece(id);
+
+    if (!piece) {
+      throw new HttpException('작품을 찾을 수 없습니다', HttpStatus.NOT_FOUND);
+    }
+
+    return piece;
   }
 }

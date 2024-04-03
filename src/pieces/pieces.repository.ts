@@ -26,4 +26,34 @@ export class PiecesRepository {
       data,
     });
   }
+
+  async getPiece(id: string): Promise<Omit<Piece, 'userId'> | null> {
+    return this.prisma.piece.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        title: true,
+        material: true,
+        year: true,
+        width: true,
+        height: true,
+        exhibited: true,
+        authorComment: true,
+        description: true,
+        image: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+    });
+  }
 }

@@ -11,3 +11,7 @@ Content-Type: application/json
   "material": "abc",
   "year": null
 }
+
+### 작품 조회
+GET {{endpoint}}/pieces/85075472-3696-43f1-8db4-410887d24339
+

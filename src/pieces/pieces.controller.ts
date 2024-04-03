@@ -6,6 +6,8 @@ import {
   UploadedFile,
   Body,
   Req,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { PiecesService } from './pieces.service';
 import { JwtAuthGuard } from 'src/auth/guards';
@@ -18,6 +20,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 import { CreatePieceDto } from './dto/request';
+import { PieceDto } from './dto/response';
 import { JwtRequest } from 'src/types/request';
 
 @ApiTags('pieces')
@@ -41,5 +44,12 @@ export class PiecesController {
       ...createPieceDto,
       file,
     });
+  }
+
+  @ApiOperation({ summary: '작품 조회' })
+  @ApiResponse({ status: 200, type: PieceDto })
+  @Get(':id')
+  async getPiece(@Param('id') id: string) {
+    return this.piecesService.getPiece(id);
   }
 }
