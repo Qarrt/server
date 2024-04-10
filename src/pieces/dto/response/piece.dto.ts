@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { UserDto } from 'src/users/dto/response';
 
-export class PieceDto {
+export class CommonPiece {
   @ApiProperty({ example: '85075472-3696-43f1-8db4-410887d24339' })
   id: string;
 
@@ -24,12 +24,6 @@ export class PieceDto {
   @ApiProperty({ example: true })
   exhibited: boolean;
 
-  @ApiProperty({ example: '**작가**의 코멘트' })
-  authorComment: string;
-
-  @ApiProperty({ example: '작품 설명' })
-  description: string;
-
   @ApiProperty({
     example:
       'https://image.leemhoon00.com/pieces/85075472-3696-43f1-8db4-410887d24339.jpeg',
@@ -41,6 +35,14 @@ export class PieceDto {
 
   @ApiProperty({ example: '2021-08-01T00:00:00.000Z' })
   updatedAt: Date;
+}
+
+export class PieceDto extends CommonPiece {
+  @ApiProperty({ example: '**작가**의 코멘트' })
+  authorComment: string;
+
+  @ApiProperty({ example: '작품 설명' })
+  description: string;
 
   @ApiProperty({ type: UserDto })
   user: UserDto;

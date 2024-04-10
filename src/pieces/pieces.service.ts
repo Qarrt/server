@@ -63,4 +63,8 @@ export class PiecesService {
   async getMyPieces(userId: string) {
     return this.piecesRepository.getMyPieces(userId);
   }
+
+  async getPieces() {
+    return this.piecesRepository.getPieces();
+  }
 }

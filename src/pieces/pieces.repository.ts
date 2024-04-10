@@ -79,4 +79,32 @@ export class PiecesRepository {
       },
     });
   }
+
+  async getPieces() {
+    return this.prisma.piece.findMany({
+      select: {
+        id: true,
+        title: true,
+        material: true,
+        year: true,
+        width: true,
+        height: true,
+        exhibited: true,
+        image: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }
