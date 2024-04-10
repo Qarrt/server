@@ -51,12 +51,16 @@ export class PiecesService {
   }
 
   async getPiece(id: string) {
-    const piece = await this.piecesRepository.getPiece(id);
+    const piece = await this.piecesRepository.getPieceWithAuthor(id);
 
     if (!piece) {
       throw new HttpException('작품을 찾을 수 없습니다', HttpStatus.NOT_FOUND);
     }
 
     return piece;
+  }
+
+  async getMyPieces(userId: string) {
+    return this.piecesRepository.getMyPieces(userId);
   }
 }

@@ -20,7 +20,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 import { CreatePieceDto } from './dto/request';
-import { PieceDto } from './dto/response';
+import { PieceDto, MyPieceRefDto } from './dto/response';
 import { JwtRequest } from 'src/types/request';
 
 @ApiTags('pieces')
@@ -44,6 +44,14 @@ export class PiecesController {
       ...createPieceDto,
       file,
     });
+  }
+
+  @ApiOperation({ summary: '내가 등록한 작품 조회' })
+  @ApiResponse({ status: 200, type: [MyPieceRefDto] })
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  async getMyPieces(@Req() req: JwtRequest): Promise<MyPieceRefDto[]> {
+    return this.piecesService.getMyPieces(req.user.userId);
   }
 
   @ApiOperation({ summary: '작품 조회' })

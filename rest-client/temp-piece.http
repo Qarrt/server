@@ -1,5 +1,5 @@
 @endpoint = http://localhost:8000
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhNmM2ZWYyYy04ZjIwLTQxMTMtODU1NS02NzQyMzEyZDU0NTkiLCJpYXQiOjE3MTIwMzg1MzksImV4cCI6MTcxMjEyNDkzOX0.su2NvLjKPkurrzvWZdSiMEQA5N0ZuGJuVfMwCUoeXew
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhNmM2ZWYyYy04ZjIwLTQxMTMtODU1NS02NzQyMzEyZDU0NTkiLCJpYXQiOjE3MTIxNDA3MDUsImV4cCI6MTcxMjIyNzEwNX0.5zzdVxkqXvU9L7zP7YpcNgfQLEprCgTDqgcdj153xpA
 
 ### 임시 작품 저장
 POST {{endpoint}}/temp-pieces
@@ -8,7 +8,10 @@ Content-Type: application/json
 
 {
   "title": "임시 작품",
-  "exhibited": true
+  "exhibited": true,
+  "authorComment": "abc
+  abc
+  abc"
 }
 
 ### 임시 작품 조회
